@@ -2,6 +2,7 @@ package com.example.jennifer.feedbackpupils;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,15 +28,12 @@ import layout.CourseOverviewFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    EditText mUsername;
-    EditText mComment;
-    EditText mRating;
-    Button mSend;
-    TextView mText;
-    TextView mCourse;
 
+    private RecyclerView mRecyclerView;
+
+    //Getting reference to Firebase Database
     DatabaseReference mRootref = FirebaseDatabase.getInstance().getReference();
-    final DatabaseReference mConditionRef = mRootref.child("test");
+    DatabaseReference mConditionRef = mRootref.child("test");
 
 
     @Override
@@ -123,21 +122,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_gallery) {
             Class<CourseOverviewFragment> courseOverViewFragment = CourseOverviewFragment.class;
         }
-/*
-        try {
-            fragment = (Fragment) CourseOverviewFragment.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-
-*/
 
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
