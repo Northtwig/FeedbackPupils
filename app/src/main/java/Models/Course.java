@@ -7,23 +7,43 @@ package Models;
 
 public class Course {
 
-    private String courseName;
-    private String courseID;
+    private String teacher;
+    private String name;
+    private String code;
 
-    public Course(String courseName, String courseID) {
-        this.courseName = courseName;
-        this.courseID = courseID;
+    public Course(String teacher, String name, String code) {
+
+        this.teacher = code;
+        this.name = name;
+        this.code = teacher;
 
     }
 
-    public String getCourseName() {
-        return courseName;
+    public Course(){}
+
+    public String getTeacher() {
+        return teacher;
     }
 
-    public String getCourseID() {
-        return courseID;
+
+    public void setTeacher(String teacher) {
+        this.teacher = teacher;
     }
 
+    public String getName() {
+        return name;
+    }
 
-        }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+}
 

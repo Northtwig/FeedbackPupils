@@ -18,6 +18,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+
+            android:name=".Subscribe"
+            android:label="@string/app_name"
+            android:layout="@layout/activity_subscribe">
+
+        </activity>
+
     </application>
 
 </manifest>
