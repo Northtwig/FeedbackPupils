@@ -1,38 +1,48 @@
 package com.example.jennifer.feedbackpupils;
 
-import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
+import com.example.jennifer.feedbackpupils.fragments.CourseListFragment;
+import com.example.jennifer.feedbackpupils.models.Course;
+import com.example.jennifer.feedbackpupils.models.Student;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
-import layout.CourseOverviewFragment;
+import java.util.ArrayList;
+
+
+
 //import layout.Subscribe;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        CourseListFragment.OnCourseSelectedListener
+
+        {
 
 
-    private RecyclerView mRecyclerView;
+    private DatabaseReference mDataRef;
+    private ArrayList<Course> mCourses = new ArrayList<>();
 
-    //Getting reference to Firebase Database
-    DatabaseReference mRootref = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference mConditionRef = mRootref.child("test");
-    static String TAG = "MainActivity";
+
 
 
     @Override
@@ -40,17 +50,13 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mDataRef = FirebaseDatabase.getInstance().getReference();
+        mDataRef.keepSynced(true);
+
+        getTheCourses();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i(TAG, "Click on the button!");
-                startActivity(new Intent(MainActivity.this, Subscribe.class));
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -60,7 +66,44 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+
+
+
+
+        // Make CourseListFragment starting window
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.add(R.id.fragment_container, new CourseListFragment());
+        ft.commit();
+
     }
+
+            public void getTheCourses(){
+
+                DatabaseReference mCoursesRef = mDataRef.child("courses");
+                mCoursesRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        Iterable<DataSnapshot> courses = dataSnapshot.getChildren();
+
+                        for(DataSnapshot ds : courses){
+
+                            Course c = ds.getValue(Course.class);
+                            c.setKey(ds.getKey());
+                            mCourses.add(c);
+
+                        }
+                        Log.d("courses","" + mCourses.size());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
 
     @Override
     protected void onStart() {
@@ -108,7 +151,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
 
         } else if (id == R.id.nav_gallery) {
-            Class<CourseOverviewFragment> courseOverViewFragment = CourseOverviewFragment.class;
+
         }
 
 
@@ -117,6 +160,31 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+            @Override
+            public void onCourseClicked(Uri uri) {
 
-}
+            }
+
+            @Override
+            public void onSubscribeToCourseClicked(String courseCode) {
+
+                DatabaseReference mStudentRef = mDataRef.child("users/students/randomkey/subscribedto");
+                int cnt = 0;
+                for(int i = 0; i<mCourses.size();i++){
+                    Course temp = mCourses.get(i);
+                    if(courseCode.equals(temp.getCode())){
+                        mStudentRef.child(temp.getKey()).setValue(true);
+                        cnt = 1;
+                    }
+                }
+                if(cnt == 1){
+                    Toast.makeText(this, "Course added", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(this, "Course NOT added", Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+        }
 

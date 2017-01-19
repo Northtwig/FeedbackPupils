@@ -1,4 +1,6 @@
-package Models;
+package com.example.jennifer.feedbackpupils.models;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Created by jennifer on 2017-01-10.
@@ -10,6 +12,10 @@ public class Course {
     private String teacher;
     private String name;
     private String code;
+
+
+    @JsonIgnore
+    private String key;
 
     public Course(String teacher, String name, String code) {
 
@@ -44,6 +50,14 @@ public class Course {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }
 
